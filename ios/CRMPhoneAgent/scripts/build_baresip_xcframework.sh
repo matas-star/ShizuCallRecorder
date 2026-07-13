@@ -21,8 +21,18 @@ test "$(git -C "$WORK_DIR/src/baresip" rev-parse HEAD)" = "$BARESIP_COMMIT"
 # for an iOS build using libre's Apple crypto implementation.
 sed -i.bak 's/^add_subdirectory(test EXCLUDE_FROM_ALL)$/# iOS XCFramework: tests disabled/' \
   "$WORK_DIR/src/re/CMakeLists.txt"
-sed -i.bak 's/RUNTIME DESTINATION \${CMAKE_INSTALL_BINDIR}/BUNDLE DESTINATION \${CMAKE_INSTALL_BINDIR} RUNTIME DESTINATION \${CMAKE_INSTALL_BINDIR}/' \
-  "$WORK_DIR/src/baresip/CMakeLists.txt"
+python3 - "$WORK_DIR/src/baresip/CMakeLists.txt" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+source = path.read_text()
+needle = "install(TARGETS baresip_exe baresip\n"
+replacement = needle + "  BUNDLE\n    DESTINATION ${CMAKE_INSTALL_BINDIR}\n    COMPONENT Applications\n"
+if source.count(needle) != 1:
+    raise SystemExit("unexpected Baresip install block")
+path.write_text(source.replace(needle, replacement))
+PY
 
 build_slice() {
   local name="$1"
