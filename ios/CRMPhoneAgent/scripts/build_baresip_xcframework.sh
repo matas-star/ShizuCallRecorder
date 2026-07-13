@@ -54,7 +54,8 @@ build_slice() {
     -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY \
     -DSTATIC=ON \
     -DCMAKE_PREFIX_PATH="$re_install" \
-    -DRE_DIR="$re_install/lib/cmake/re" \
+    -DRE_INCLUDE_DIR="$re_install/include/re" \
+    -DRE_LIBRARY="$re_install/lib/libre.a" \
     -DMODULES="g711;audiounit;stun;turn;ice"
   cmake --build "$baresip_build" --config Release --target baresip --parallel
 
