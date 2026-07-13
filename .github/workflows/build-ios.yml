@@ -12,6 +12,11 @@ jobs:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: distribution/sip_gateway/requirements.txt
       - name: Install XcodeGen
         run: brew install xcodegen
       - name: Install gateway test dependencies
