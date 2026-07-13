@@ -65,6 +65,7 @@ build_slice() {
     -DCMAKE_OSX_DEPLOYMENT_TARGET=17.5 \
     -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY \
     -DSTATIC=ON \
+    -DOPENSSL_INCLUDE_DIR="$WORK_DIR/src/re/include" \
     -DCMAKE_PREFIX_PATH="$re_install" \
     -Dre_DIR="$re_install/lib/cmake/re" \
     -DRE_INCLUDE_DIR="$re_install/include/re" \
