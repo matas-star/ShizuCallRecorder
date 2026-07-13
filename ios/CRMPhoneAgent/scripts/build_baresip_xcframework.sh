@@ -21,6 +21,8 @@ test "$(git -C "$WORK_DIR/src/baresip" rev-parse HEAD)" = "$BARESIP_COMMIT"
 # for an iOS build using libre's Apple crypto implementation.
 sed -i.bak 's/^add_subdirectory(test EXCLUDE_FROM_ALL)$/# iOS XCFramework: tests disabled/' \
   "$WORK_DIR/src/re/CMakeLists.txt"
+sed -i.bak 's/RUNTIME DESTINATION \${CMAKE_INSTALL_BINDIR}/BUNDLE DESTINATION \${CMAKE_INSTALL_BINDIR} RUNTIME DESTINATION \${CMAKE_INSTALL_BINDIR}/' \
+  "$WORK_DIR/src/baresip/CMakeLists.txt"
 
 build_slice() {
   local name="$1"
