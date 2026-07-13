@@ -228,8 +228,7 @@ final class AppModel: ObservableObject {
             return
         }
         guard let metadata = payload["metadata"] as? [String: Any],
-              let token = try? KeychainStore.get(account: "telnyx-jwt"),
-              let token else {
+              let token = try? KeychainStore.get(account: "telnyx-jwt") else {
             voice.reportUnavailablePush(payload, completion: completion)
             return
         }
