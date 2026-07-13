@@ -1,0 +1,27 @@
+[general]
+static=yes
+writeprotect=yes
+clearglobalvars=no
+
+[globals]
+BROKER_ID=BROKER_ID_VALUE
+BROKER_MSISDN=BROKER_MSISDN_E164
+
+[from-tele2]
+exten => _X!,1,NoOp(Incoming Tele2 call for ${BROKER_ID} from ${CALLERID(num)})
+ same => n,Set(GATEWAY_CALL_ID=${UNIQUEID})
+ same => n,AGI(/opt/crm-phone/notify_gateway.py,${BROKER_ID},${GATEWAY_CALL_ID},${CALLERID(num)})
+ same => n,Wait(1)
+ same => n,Dial(PJSIP/broker-device,45)
+ same => n,Hangup()
+
+[from-crm-phone]
+exten => _+X!,1,NoOp(Outgoing CRM Phone call to ${EXTEN})
+ same => n,Set(CALLERID(num)=${BROKER_MSISDN})
+ same => n,Dial(PJSIP/${EXTEN}@tele2-endpoint,60)
+ same => n,Hangup()
+
+exten => _X!,1,NoOp(Outgoing CRM Phone call to ${EXTEN})
+ same => n,Set(CALLERID(num)=${BROKER_MSISDN})
+ same => n,Dial(PJSIP/${EXTEN}@tele2-endpoint,60)
+ same => n,Hangup()

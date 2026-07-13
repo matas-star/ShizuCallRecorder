@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "APPLE_TEAM_ID.lt.crmphone.agent"
+        ],
+        "components": [
+          {
+            "/": "/mobile/call",
+            "comment": "Open CRM Phone dialer from Base44"
+          }
+        ]
+      }
+    ]
+  }
+}
