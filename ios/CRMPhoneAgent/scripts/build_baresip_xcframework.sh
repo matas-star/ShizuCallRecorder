@@ -17,6 +17,11 @@ git clone --depth 1 --branch "v$VERSION" https://github.com/baresip/baresip.git 
 test "$(git -C "$WORK_DIR/src/re" rev-parse HEAD)" = "$RE_COMMIT"
 test "$(git -C "$WORK_DIR/src/baresip" rev-parse HEAD)" = "$BARESIP_COMMIT"
 
+# Upstream configures excluded test targets that hard-require host OpenSSL even
+# for an iOS build using libre's Apple crypto implementation.
+sed -i.bak 's/^add_subdirectory(test EXCLUDE_FROM_ALL)$/# iOS XCFramework: tests disabled/' \
+  "$WORK_DIR/src/re/CMakeLists.txt"
+
 build_slice() {
   local name="$1"
   local sdk="$2"
@@ -32,10 +37,12 @@ build_slice() {
     -DCMAKE_OSX_ARCHITECTURES=arm64 \
     -DCMAKE_OSX_DEPLOYMENT_TARGET=17.5 \
     -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY \
+    -DUSE_OPENSSL=OFF \
+    -DOPENSSL_INCLUDE_DIR="$WORK_DIR/src/re/include" \
     -DLIBRE_BUILD_SHARED=OFF \
     -DLIBRE_BUILD_STATIC=ON \
     -DCMAKE_INSTALL_PREFIX="$re_install"
-  cmake --build "$re_build" --config Release --parallel
+  cmake --build "$re_build" --config Release --target re --parallel
   cmake --install "$re_build" --config Release
 
   cmake -S "$WORK_DIR/src/baresip" -B "$baresip_build" \
@@ -49,7 +56,7 @@ build_slice() {
     -DCMAKE_PREFIX_PATH="$re_install" \
     -DRE_DIR="$re_install/lib/cmake/re" \
     -DMODULES="g711;audiounit;stun;turn;ice"
-  cmake --build "$baresip_build" --config Release --parallel
+  cmake --build "$baresip_build" --config Release --target baresip --parallel
 
   local re_archive
   local baresip_archive
