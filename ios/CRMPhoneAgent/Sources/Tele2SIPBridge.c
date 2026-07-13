@@ -1,5 +1,6 @@
 #include "Tele2SIPBridge.h"
 
+#include <stdint.h>
 #include <baresip.h>
 #include <errno.h>
 #include <pthread.h>
