@@ -11,7 +11,7 @@ struct ContentView: View {
             KeypadView().tabItem { Label("Klaviatura", systemImage: "circle.grid.3x3") }.tag(AppModel.Tab.keypad)
             CRMView().tabItem { Label("CRM", systemImage: "briefcase") }.tag(AppModel.Tab.crm)
         }
-        .sheet(isPresented: $model.showSettings) { SettingsView() }
+        .sheet(isPresented: $model.showSettings) { SettingsView(settings: model.settings) }
     }
 }
 
@@ -23,7 +23,7 @@ private struct RecentsView: View {
                 Button { model.call(number: item.phoneNumber) } label: {
                     HStack {
                         Image(systemName: item.direction == "incoming" ? "phone.arrow.down.left" : "phone.arrow.up.right")
-                            .foregroundStyle(item.answered ? .primary : .red)
+                            .foregroundStyle(item.answered ? Color.primary : Color.red)
                         VStack(alignment: .leading) {
                             Text(item.displayName ?? item.phoneNumber).foregroundStyle(.primary)
                             Text(item.phoneNumber).font(.caption).foregroundStyle(.secondary)
@@ -152,6 +152,7 @@ private struct CRMWebView: UIViewRepresentable {
 struct SettingsView: View {
     @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject var settings: AppSettings
     var body: some View {
         NavigationStack {
             Form {
@@ -162,12 +163,12 @@ struct SettingsView: View {
                     Button("Suteikti leidimus") { Task { await model.permissions.requestAll() } }
                 }
                 Section("Base44") {
-                TextField("https://...base44.app/", text: $model.settings.baseURL).textInputAutocapitalization(.never).keyboardType(.URL)
-                TextField("Brokerio ID", text: $model.settings.brokerID)
-                SecureField("Base44 prieigos tokenas", text: $model.settings.accessToken)
+                TextField("https://...base44.app/", text: $settings.baseURL).textInputAutocapitalization(.never).keyboardType(.URL)
+                TextField("Brokerio ID", text: $settings.brokerID)
+                SecureField("Base44 prieigos tokenas", text: $settings.accessToken)
                 }
                 Section("Skambucio kelias") {
-                    Picker("Rezimas", selection: $model.settings.callMode) {
+                    Picker("Rezimas", selection: $settings.callMode) {
                         ForEach(AppModel.CallMode.allCases) { mode in
                             Text(mode.title).tag(mode)
                         }
@@ -176,14 +177,14 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                if model.settings.callMode == .tele2SIP {
+                if settings.callMode == .tele2SIP {
                     Section("Tele2 SIP endpointas") {
-                        TextField("Registrar address", text: $model.settings.sipRegistrar)
+                        TextField("Registrar address", text: $settings.sipRegistrar)
                             .textInputAutocapitalization(.never).keyboardType(.URL)
-                        TextField("Username", text: $model.settings.sipUsername)
+                        TextField("Username", text: $settings.sipUsername)
                             .textInputAutocapitalization(.never)
-                        SecureField("Password", text: $model.settings.sipPassword)
-                        Picker("Transportas", selection: $model.settings.sipTransport) {
+                        SecureField("Password", text: $settings.sipPassword)
+                        Picker("Transportas", selection: $settings.sipTransport) {
                             Text("TCP").tag("tcp")
                             Text("UDP").tag("udp")
                         }.pickerStyle(.segmented)
@@ -198,7 +199,7 @@ struct SettingsView: View {
     }
 
     private var modeDescription: String {
-        switch model.settings.callMode {
+        switch settings.callMode {
         case .tele2SIP:
             "Pilnas mūsų skambučio UI per Tele2 VoIP endpointą; numerį ir įrašymą valdo Mobili stotelė."
         case .tele2Carrier:
