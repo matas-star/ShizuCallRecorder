@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "provider": "cloudtalk",
+  "call_id": "ct-test-answered-001",
+  "recording_call_id": 100001,
+  "direction": "outbound",
+  "status": "answered",
+  "answered": true,
+  "talking_time_seconds": 42,
+  "started_at": "2026-07-13T12:00:00Z",
+  "ended_at": "2026-07-13T12:00:52Z",
+  "external_number": "+37060000000",
+  "agent_id": "agent-test-1",
+  "agent_email": "broker@example.com"
+}
