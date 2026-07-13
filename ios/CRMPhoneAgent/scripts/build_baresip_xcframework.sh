@@ -93,8 +93,7 @@ build_slice simulator iphonesimulator
 
 HEADERS="$WORK_DIR/headers"
 mkdir -p "$HEADERS"
-cp "$WORK_DIR/src/re/include/re.h" "$HEADERS/"
-cp -R "$WORK_DIR/src/re/include/re" "$HEADERS/"
+cp "$WORK_DIR/src/re/include/"*.h "$HEADERS/"
 cp "$WORK_DIR/src/baresip/include/baresip.h" "$HEADERS/"
 
 rm -rf "$OUTPUT_DIR/CRMPhoneBaresip.xcframework"
